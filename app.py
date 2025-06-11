@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import logging
+import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests from the frontend
+CORS(app, resources={r"/api/*": {"origins": os.getenv('ALLOWED_ORIGINS', '*')}})  # Enable CORS for cross-origin requests from the frontend
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -187,4 +188,5 @@ def analyze_file():
         return jsonify({'error': f'Failed to process file: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
